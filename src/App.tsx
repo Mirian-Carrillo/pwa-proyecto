@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { saveOfflineData, syncOfflineData, sendToFirestore } from "./db";
+
 
 // 🎧 Configuración Firebase
 const firebaseConfig = {
@@ -16,8 +16,7 @@ const firebaseConfig = {
 };
 
 // Inicializar Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+initializeApp(firebaseConfig);
 
 /* === Indicador Online/Offline === */
 function OnlineBadge() {
@@ -71,7 +70,7 @@ export default function App() {
         return;
       }
 
-      const messaging = getMessaging(app);
+      const messaging = getMessaging();
       const token = await getToken(messaging, {
         vapidKey:
           "BKRvjDN5rI8jDtiDDEXVZqIKKCg_YZbUgdpe-tMBDocU6bak1lE8M27yhNZNMXvL0_VZJxgUcazDaCpbKO672qU",
@@ -91,7 +90,7 @@ export default function App() {
 
   // Escuchar mensajes push en primer plano
   useEffect(() => {
-    const messaging = getMessaging(app);
+    const messaging = getMessaging();
     onMessage(messaging, (payload) => {
       console.log("📨 Notificación recibida:", payload);
       alert(`🎵 ${payload.notification?.title}\n${payload.notification?.body}`);
@@ -142,7 +141,6 @@ export default function App() {
               <h3>Labios Rotos — Zoe</h3>
               <p>Una de las canciones más icónicas del rock alternativo.</p>
             </article>
-
             <article className="card">
               <img src="/assets/humbe.jpg" alt="Humbe" />
               <h3>Esencia — Humbe</h3>
@@ -171,7 +169,6 @@ export default function App() {
           </div>
         </section>
 
-        {/* === FORMULARIO AJUSTADO === */}
         <section
           style={{
             backgroundColor: "#fff8f5",
@@ -314,24 +311,12 @@ export default function App() {
                   transition: "all 0.3s ease",
                   boxShadow: "0 4px 10px rgba(82,182,154,0.3)",
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                  e.currentTarget.style.boxShadow =
-                    "0 6px 14px rgba(82,182,154,0.4)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow =
-                    "0 4px 10px rgba(82,182,154,0.3)";
-                }}
               >
                 ✨ Enviar comentario
               </button>
             </form>
           </div>
         </section>
-
-
 
         <div className="likes">
           <button onClick={() => setLikes(likes + 1)}>
